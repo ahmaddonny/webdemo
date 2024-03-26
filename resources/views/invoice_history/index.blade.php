@@ -20,7 +20,7 @@
         <!--begin::Page title-->
         <div class="page-title d-flex flex-column me-3">
             <!--begin::Title-->
-            <h1 class="d-flex text-white fw-bold my-1 fs-3">History Mail</h1>
+            <h1 class="d-flex text-white fw-bold my-1 fs-3">Mail History</h1>
             <!--end::Title-->
         </div>
         <!--end::Page title-->
@@ -146,7 +146,7 @@
             { data: 'process_id', name: 'process_id' },
             { data: 'send_status', name: 'send_status',
                 render: function (data, type, row) {
-                    return '<span class="badge py-3 px-4 fs-7 badge-light-success">Success</span>'
+                    return '<span class="badge py-3 px-4 fs-7 badge-light-success">Sent</span>'
                 }
             },
             { data: 'send_date', name: 'send_date' },

@@ -18,11 +18,11 @@ use App\Models\InvoiceLog;
 use App\Models\ArLedger;
 use App\Models\Admin\EmailConfiguration;
 
-class HistoryMailController extends Controller
+class HistoryWhatsappController extends Controller
 {
     public function index()
     {
-        return view('invoice_history.index');
+        return view('invoice_history.index_whatsapp');
     }
 
     public function getTable($status)
@@ -52,7 +52,7 @@ class HistoryMailController extends Controller
             Config::set('mail', $config);
 
             $dt = $data['models'];
-            if (!empty($dt)) {
+            if (!empty ($dt)) {
                 for ($i = 0; $i < count($dt); $i++) {
                     $email = trim(strtolower($dt[$i]['email_addr']));
 
@@ -119,7 +119,7 @@ class HistoryMailController extends Controller
                             $pecah_email = explode(";", $email);
 
                             try {
-                                if (!empty($pecah_email)) {
+                                if (!empty ($pecah_email)) {
                                     Mail::to($pecah_email)->send(new InvoiceMail($attr));
 
                                     InvoiceHeader::where($where)->update($data_hdr_success);
@@ -148,7 +148,7 @@ class HistoryMailController extends Controller
                         } else {
                             // Jika tidak ada tanda titik koma
                             try {
-                                if (isset($email) && !empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                                if (isset ($email) && !empty ($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
                                     Mail::to($email)->send(new InvoiceMail($attr));
 
                                     InvoiceHeader::where($where)->update($data_hdr_success);

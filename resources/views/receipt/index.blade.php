@@ -20,7 +20,7 @@
         <!--begin::Page title-->
         <div class="page-title d-flex flex-column me-3">
             <!--begin::Title-->
-            <h1 class="d-flex text-white fw-bold my-1 fs-3">Receipt Mail</h1>
+            <h1 class="d-flex text-white fw-bold my-1 fs-3">Receipt List</h1>
             <!--end::Title-->
         </div>
         <!--end::Page title-->
@@ -34,10 +34,16 @@
                 </span>
             </button>
             &nbsp;
-            <button type="button" id="btnSave" class="btn bg-body btn-active-color-primary">
+            {{-- <button type="button" id="btnSave" class="btn bg-body btn-active-color-primary">
                 <span class="indicator-label">
                     <i class="fa-regular fa-paper-plane me-2"></i>
                     <span>Send Email</span>
+                </span>
+            </button> --}}
+            <button type="button" id="btnSendInvoice" class="btn bg-body btn-active-color-primary">
+                <span class="indicator-label">
+                    <i class="fa-regular fa-paper-plane me-2"></i>
+                    <span>Send Invoice</span>
                 </span>
             </button>
             <!--end::Button-->
@@ -65,6 +71,7 @@
                                 <th class="min-w-30px"></th>
                                 <th>Debtor Acct</th>
                                 <th>Name</th>
+                                <th>Telphone No</th>
                                 <th>Email Addr</th>
                                 <th>Doc No</th>
                                 <th>Delete</th>
@@ -100,6 +107,11 @@
             { data: null, className: 'select-checkbox', defaultContent: '', orderable: false },
             { data: 'debtor_acct', name: 'debtor_acct' },
             { data: 'debtor_name', name: 'debtor_name' },
+            { data: 'email_addr', name: 'email_addr',
+                render: function(data, type, row) {
+                    return '08112777873';
+                }
+            },
             { data: 'email_addr', name: 'email_addr' },
             { data: 'doc_no', name: 'doc_no',
                 render: function (data, type, row) {
@@ -508,11 +520,38 @@
         })
     });
 
+    $(document).on('click', '#btnSendInvoice', function(event)
+    {
+        var dataTableRows = tblreceipt.rows({selected: true}).data().toArray();
+
+        if (dataTableRows.length == 0)
+        {
+            Swal.fire({
+                title: "Error",
+                icon: "error",
+                text: "Please select at least one or select all of them.",
+                confirmButtonText: "OK"
+            });
+            return false;
+        }
+
+        $('#modaldialog').removeClass('modal-sm');
+        $('#modaldialog').addClass('modal-md');
+        $('#modaltitle').html('Send Official Receipt');
+        $('#modalbody').load("{{ route('index.popup-send-receipt') }}");
+        $('#modal').modal({
+            'backdrop': 'static',
+            'keyboard': false
+        });
+        $('#modal').data('models', dataTableRows);
+        $('#modal').modal('show');
+    });
+
     function previewFile(datas) {
         var split = datas.split(",");
         var filename = split[0];
         var status = split[1];
-        var company_cd = 'CKFJWG';
+        var company_cd = "{{ Session::get('companyCd') }}";
         var file_path = '';
 
         if (status == 'A' || status == 'F' || status == "null") {

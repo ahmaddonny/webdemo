@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
@@ -50,7 +51,7 @@ class OfficialReceiptController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
-        $company = 'CKFJWG';
+        $company = Session::get('companyCd');
         $data_email = EmailConfiguration::first();
 
         if (!is_null($data_email)) {
@@ -68,7 +69,7 @@ class OfficialReceiptController extends Controller
             Config::set('mail', $config);
 
             $dt = $data['models'];
-            if (!empty($dt)) {
+            if (!empty ($dt)) {
                 for ($i = 0; $i < count($dt); $i++) {
                     $email = trim(strtolower($dt[$i]['email_addr']));
                     $process_id = Str::random(8);
@@ -175,7 +176,7 @@ class OfficialReceiptController extends Controller
                                     );
 
                                     try {
-                                        if (!empty($emails)) {
+                                        if (!empty ($emails)) {
                                             Mail::to($emails)->send(new ReceiptMail($attr));
 
                                             $receipt_header = ReceiptHeader::create($data_hdr_success_no_stamp);
@@ -305,7 +306,7 @@ class OfficialReceiptController extends Controller
                                 );
 
                                 try {
-                                    if (isset($email) && !empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                                    if (isset ($email) && !empty ($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
                                         Mail::to($email)->send(new ReceiptMail($attr));
 
                                         $receipt_header = ReceiptHeader::create($data_hdr_success_no_stamp);
@@ -431,7 +432,7 @@ class OfficialReceiptController extends Controller
                                     );
 
                                     try {
-                                        if (!empty($emails)) {
+                                        if (!empty ($emails)) {
                                             Mail::to($emails)->send(new ReceiptMail($attr));
 
                                             ReceiptHeader::where($where)->update($data_hdr_success);
@@ -512,7 +513,7 @@ class OfficialReceiptController extends Controller
                                 );
 
                                 try {
-                                    if (isset($email) && !empty($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                                    if (isset ($email) && !empty ($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
                                         Mail::to($email)->send(new ReceiptMail($attr));
 
                                         ReceiptHeader::where($where)->update($data_hdr_success);
@@ -573,7 +574,7 @@ class OfficialReceiptController extends Controller
 
     protected function attributeEmail($param)
     {
-        $company = 'CKFJWG';
+        $company = Session::get('companyCd');
 
         if ($param['file_status'] == null) {
             $data = array(
@@ -602,9 +603,9 @@ class OfficialReceiptController extends Controller
     {
         $data = $request->all();
         $dt = $data['models'];
-        $company = 'CKFJWG';
+        $company = Session::get('companyCd');
 
-        if (!empty($dt)) {
+        if (!empty ($dt)) {
             $count = count($dt);
 
             $kuota = Http::get(env('API_GATEWAY') . 'getKuota?company_cd=' . $company);
@@ -752,7 +753,7 @@ class OfficialReceiptController extends Controller
     {
         $data = $request->all();
 
-        $company = 'CKFJWG';
+        $company = Session::get('companyCd');
 
         $criteria = array(
             'process_id' => '0',
@@ -822,5 +823,33 @@ class OfficialReceiptController extends Controller
         }
 
         return response()->json($response);
+    }
+
+    public function showPopupSend()
+    {
+        return view('receipt.popup_send');
+    }
+
+    public function storeMultiPlatform(Request $request)
+    {
+        $data = $request->all();
+
+        $typesToSend = array_column($data['datafrm'], 'value');
+
+        if (in_array('email', $typesToSend)) {
+            $res = $this->store($data);
+
+            return response()->json($res);
+        } else if (in_array('whatsapp', $typesToSend)) {
+            $res = $this->storeWA($data);
+
+            return response()->json($res);
+        } else if (in_array('email', $typesToSend) && in_array('whatsapp', $typesToSend)) {
+            $res = $this->storeJoin($data);
+
+            return response()->json($res);
+        } else {
+            echo "Cannot run processing";
+        }
     }
 }

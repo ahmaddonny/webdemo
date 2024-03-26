@@ -20,14 +20,14 @@
         <!--begin::Page title-->
         <div class="page-title d-flex flex-column me-3">
             <!--begin::Title-->
-            <h1 class="d-flex text-white fw-bold my-1 fs-3">Invoice Mail</h1>
+            <h1 class="d-flex text-white fw-bold my-1 fs-3">Invoice List</h1>
             <!--end::Title-->
         </div>
         <!--end::Page title-->
         <!--begin::Actions-->
         <div class="d-flex align-items-center py-3 py-md-1">
             <!--begin::Button-->
-            <button type="button" id="btnSendWA" class="btn bg-body btn-active-color-success">
+            {{-- <button type="button" id="btnSendWA" class="btn bg-body btn-active-color-success">
                 <span class="indicator-label">
                     <i class="fa-brands fa-whatsapp me-2"></i>
                     <span>Send WhatsApp</span>
@@ -38,6 +38,13 @@
                 <span class="indicator-label">
                     <i class="fa-regular fa-paper-plane me-2"></i>
                     <span>Send Email</span>
+                </span>
+            </button>
+            &nbsp; --}}
+            <button type="button" id="btnSendInvoice" class="btn bg-body btn-active-color-primary">
+                <span class="indicator-label">
+                    <i class="fa-regular fa-paper-plane me-2"></i>
+                    <span>Send Invoice</span>
                 </span>
             </button>
             <!--end::Button-->
@@ -67,6 +74,7 @@
                                 <th>Lot No</th>
                                 <th>Name</th>
                                 <th>Doc No</th>
+                                <th>Telphone No</th>
                                 <th>Email Addr</th>
                                 <th>Delete</th>
                                 <th>Details</th>
@@ -103,6 +111,11 @@
             { data: 'lot_no', name: 'lot_no' },
             { data: 'debtor_name', name: 'debtor_name' },
             { data: 'doc_no', name: 'doc_no' },
+            { data: 'email_addr', name: 'email_addr',
+                render: function(data, type, row) {
+                    return '08112777873';
+                }
+            },
             { data: 'email_addr', name: 'email_addr' },
             { data: 'doc_no', name: 'doc_no', className: 'text-center',
                 render: function(data, type, row) {
@@ -430,6 +443,33 @@
                 });
             } else { }
         })
+    });
+
+    $(document).on('click', '#btnSendInvoice', function(event)
+    {
+        var dataTableRows = tblinvoice.rows({selected: true}).data().toArray();
+
+        if (dataTableRows.length == 0)
+        {
+            Swal.fire({
+                title: "Error",
+                icon: "error",
+                text: "Please select at least one or select all of them.",
+                confirmButtonText: "OK"
+            });
+            return false;
+        }
+
+        $('#modaldialog').removeClass('modal-sm');
+        $('#modaldialog').addClass('modal-md');
+        $('#modaltitle').html('Send Invoice');
+        $('#modalbody').load("{{ route('index.popup-send-invoice') }}");
+        $('#modal').modal({
+            'backdrop': 'static',
+            'keyboard': false
+        });
+        $('#modal').data('models', dataTableRows);
+        $('#modal').modal('show');
     });
 
     function previewFile(filename) {

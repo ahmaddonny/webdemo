@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
 use Carbon\Carbon;
@@ -16,8 +17,8 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $email = 'mgr@ifca.co.id';
-        $company = 'CKFJWG';
+        $email = Session::get('email');
+        $company = Session::get('companyCd');
 
         $status = Http::get(env('API_GATEWAY') . 'count_status?email=' . $email);
         $data_status = $status->json('Data');
@@ -38,7 +39,7 @@ class DashboardController extends Controller
 
     public function getTable(Request $request)
     {
-        $email = 'mgr@ifca.co.id';
+        $email = Session::get('email');
         $status = $request->status;
 
         $response = Http::get(env('API_GATEWAY') . 'getTable?email=' . $email . '&status=' . $status);
@@ -97,20 +98,29 @@ class DashboardController extends Controller
     // nyalakan jika ingin pembelian e-materai dengan paperID
     public function store(Request $request)
     {
-        $company = 'CKFJWG';
+        $data = $request->all();
+        $quota = $data['quota'];
+        $price = $data['price'];
+        $calculated = $data['calculated'];
+
+        $rowID = Session::get('rowID');
+        $name = Session::get('name');
+        $email = Session::get('email');
+        $hp = Session::get('hp');
+        $company = Session::get('companyCd');
 
         $customer = array(
-            'id' => strval('1'),
-            'name' => 'MGR',
-            'email' => 'mgr@ifca.co.id',
-            'phone' => '085710008512',
+            'id' => strval($rowID),
+            'name' => $name,
+            'email' => $email,
+            'phone' => $hp,
         );
 
         $item[] = array(
             'name' => "e-Meterai",
             'description' => "Pembelian e-Meterai",
-            'quantity' => (int) $request->quota,
-            'price' => 11000,
+            'quantity' => (int) $quota,
+            'price' => (int) $price,
             'discount' => '',
             'tax' => '',
             'additional_info' => '',
@@ -129,7 +139,7 @@ class DashboardController extends Controller
                 'number' => "INV-" . $company . "-" . Carbon::now('Asia/Jakarta')->format('m') . "-" . Carbon::now('Asia/Jakarta')->format('Y') . "-" . Str::random(8),
                 'customer' => $customer,
                 'items' => $item,
-                'total' => (int) $request->calculated,
+                'total' => (int) $calculated,
                 'send' => $send,
                 'company_cd' => $company,
                 'pay_cd' => 'TOPUP'
@@ -143,7 +153,7 @@ class DashboardController extends Controller
                     'number' => "INV-" . $company . "-" . Carbon::now('Asia/Jakarta')->format('m') . "-" . Carbon::now('Asia/Jakarta')->format('Y') . "-" . Str::random(8),
                     'customer' => $customer,
                     'items' => $item,
-                    'total' => (int) $request->calculated,
+                    'total' => (int) $calculated,
                     'send' => $send,
                     'company_cd' => $company,
                     'pay_cd' => 'TOPUP'
@@ -156,7 +166,7 @@ class DashboardController extends Controller
                 'number' => "INV-" . $company . "-" . Carbon::now('Asia/Jakarta')->format('m') . "-" . Carbon::now('Asia/Jakarta')->format('Y') . "-" . Str::random(8),
                 'customer' => $customer,
                 'items' => $item,
-                'total' => (int) $request->calculated,
+                'total' => (int) $calculated,
                 'send' => $send,
                 'company_cd' => $company,
                 'pay_cd' => 'CKFJWG'
@@ -170,7 +180,7 @@ class DashboardController extends Controller
                     'number' => "INV-" . $company . "-" . Carbon::now('Asia/Jakarta')->format('m') . "-" . Carbon::now('Asia/Jakarta')->format('Y') . "-" . Str::random(8),
                     'customer' => $customer,
                     'items' => $item,
-                    'total' => (int) $request->calculated,
+                    'total' => (int) $calculated,
                     'send' => $send,
                     'company_cd' => $company,
                     'pay_cd' => 'CKFJWG'
@@ -178,7 +188,7 @@ class DashboardController extends Controller
             );
         }
 
-        $data = $response->json();
-        return response()->json($data);
+        $callback = $response->json();
+        return response()->json($callback);
     }
 }

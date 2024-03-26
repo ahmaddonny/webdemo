@@ -92,7 +92,7 @@
                             <!--begin::Input group=-->
                             <div class="fv-row mb-8">
                                 <!--begin::Email-->
-                                <input type="text" placeholder="Enter your user id" name="userId" id="userId"
+                                <input type="text" placeholder="Enter your email" name="email" id="email"
                                     autocomplete="off" class="form-control" />
                                 <!--end::Email-->
                             </div>
@@ -159,7 +159,7 @@
 	});
 
 	@if(Session::has('alert'))
-		toastr.error("{{Session::get('alert')}}");
+		toastr.error("{{ Session::get('alert') }}");
 		toastr.options = {
 			"closeButton": false,
 			"debug": false,
@@ -178,7 +178,7 @@
 			"hideMethod": "fadeOut"
 		}
 	@elseif (Session::has('succes_change'))
-		toastr.success("{{Session::get('succes_change')}}");
+		toastr.success("{{ Session::get('succes_change') }}");
 		toastr.options = {
 			"closeButton": false,
 			"debug": false,
@@ -209,8 +209,12 @@
             sign_form,
             {
                 fields: {
-                    userId: {
+                    email: {
                         validators: {
+                            regexp: {
+                                regexp: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                                message: 'The value is not a valid email address',
+                            },
                             notEmpty: {
                                 message: 'This field is required.'
                             }

@@ -56,6 +56,8 @@
                             <span class="d-block lh-1 mb-5" data-kt-pos-element="total">Rp. 11.000</span>
                             <span class="d-block fs-2qx lh-1" data-kt-pos-element="grant-total" id="grant-total">Rp.
                                 -</span>
+                            <input type="hidden" class="form-control form-control-sm form-control-solid" id="price"
+                                name="price" readonly />
                             <input type="hidden" class="form-control form-control-sm form-control-solid" id="calculated"
                                 name="calculated" readonly />
                         </div>
@@ -96,12 +98,14 @@
         $('#quota').change(function() {
             if ($(this).val() == "") {
                 $('#grant-total').text('Rp. -');
+                $('#price').val('');
                 $('#calculated').val('');
             } else {
                 var selectedValue = parseInt($(this).val());
                 var grantTotal = selectedValue * 11000;
 
                 $('#grant-total').text('Rp. ' + grantTotal.toLocaleString());
+                $('#price').val(11000);
                 $('#calculated').val(grantTotal);
             }
         });

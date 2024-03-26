@@ -23,11 +23,11 @@ use App\Models\ReceiptDetail;
 use App\Models\ReceiptLog;
 use App\Models\Admin\EmailConfiguration;
 
-class HistoryReceiptController extends Controller
+class HistoryReceiptWhatsappController extends Controller
 {
     public function index()
     {
-        return view('receipt_history.index');
+        return view('receipt_history.index_whatsapp');
     }
 
     public function getTable($status)

@@ -24,8 +24,7 @@
     <div class="content flex-row-fluid" id="kt_content">
         <h2 class="fw-bold text-gray-800">Welcome,</h2>
         <div class="text-white fw-semibold fs-6 mb-5">
-            {{-- {{ Auth()->user()->name }} --}}
-            Developer
+            {{ Session::get('name') }}
         </div>
         <!--begin::Row-->
         <div class="row gy-5 g-xl-8 mb-xl-5">
@@ -40,7 +39,7 @@
                                 <div class="fw-bold fs-1" data-kt-countup="true"
                                     data-kt-countup-value="{{ $trans_pending }}">
                                     {{ $trans_pending }}</div>
-                                <div class="fw-semibold fs-6">Pending Transaction</div>
+                                <div class="fw-semibold fs-6">E-meterai Payment Pending</div>
                             </div>
                             <div class="col-4">
                                 <div class="d-flex flex-center rounded-circle w-50px h-50px bg-light-warning border-clarity-warning"
@@ -66,7 +65,7 @@
                                 <div class="fw-bold fs-1" data-kt-countup="true"
                                     data-kt-countup-value="{{ $trans_done }}">
                                     {{ $trans_done }}</div>
-                                <div class="fw-semibold fs-6">Complete Transaction</div>
+                                <div class="fw-semibold fs-6">E-meterai Payment Complete</div>
                             </div>
                             <div class="col-4">
                                 <div class="d-flex flex-center rounded-circle w-50px h-50px bg-light-primary border-clarity-primary"

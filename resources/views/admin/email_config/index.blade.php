@@ -392,7 +392,7 @@
                                             text: textStatus+' : '+jqXHR.responseJSON.message,
                                             confirmButtonText: "OK"
                                         }).then(function() {
-                                        // Remove loading indication
+                                            // Remove loading indication
                                             submitButton.removeAttribute('data-kt-indicator');
 
                                             // Enable button
@@ -405,7 +405,7 @@
                                             text: textStatus+' : '+jqXHR.statusText,
                                             confirmButtonText: "OK"
                                         }).then(function() {
-                                        // Remove loading indication
+                                            // Remove loading indication
                                             submitButton.removeAttribute('data-kt-indicator');
 
                                             // Enable button
